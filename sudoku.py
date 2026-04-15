@@ -297,3 +297,155 @@ def solve(grid):
 # ══════════════════════════════════════════════
 #  SECTION 4 — UTILITIES
 # ══════════════════════════════════════════════
+def read_grid(filename):
+    """
+    Read a Sudoku board from a text file.
+
+    Expected format:
+      - Exactly 9 lines
+      - Each line has exactly 9 digits (0–9)
+      - 0 = empty cell
+    """
+    grid = []
+    with open(filename) as f:
+        for line in f:
+            line = line.strip()
+            if line:                         # skip blank lines
+                if len(line) != 9 or not line.isdigit():
+                    raise ValueError(f"Bad line in {filename}: '{line}'")
+                grid.append([int(ch) for ch in line])
+
+    if len(grid) != 9:
+        raise ValueError(f"{filename} must have exactly 9 rows, got {len(grid)}")
+
+    return grid
+
+
+def assignment_to_grid(assignment):
+    """Convert flat assignment dict back to 9×9 list."""
+    grid = [[0] * 9 for _ in range(9)]
+    for (r, c), v in assignment.items():
+        grid[r][c] = v
+    return grid
+
+
+def print_grid(grid, label=""):
+    """Pretty-print a 9×9 Sudoku grid with box separators."""
+    if label:
+        print(f"\n{'═'*31}")
+        print(f"  {label}")
+        print(f"{'═'*31}")
+
+    for r in range(9):
+        if r in (3, 6):
+            print("------+-------+------")
+        row_str = ""
+        for c in range(9):
+            if c in (3, 6):
+                row_str += "| "
+            row_str += str(grid[r][c]) + " "
+        print(row_str)
+    print()
+
+
+def verify_solution(grid):
+    """Check that a completed grid satisfies all Sudoku constraints."""
+    expected = set(range(1, 10))
+
+    for i in range(9):
+        if set(grid[i]) != expected:                          # row
+            return False
+        if set(grid[r][i] for r in range(9)) != expected:    # col
+            return False
+
+    for br in range(3):
+        for bc in range(3):
+            box = {grid[br*3+r][bc*3+c] for r in range(3) for c in range(3)}
+            if box != expected:                               # box
+                return False
+
+    return True
+
+
+# ══════════════════════════════════════════════
+#  SECTION 5 — MAIN
+# ══════════════════════════════════════════════
+
+def main():
+    puzzles = [
+        ("easy.txt",      "Easy Board"),
+        ("medium.txt",    "Medium Board"),
+        ("hard.txt",      "Hard Board"),
+        ("veryhard.txt",  "Very Hard Board"),
+    ]
+
+    print("\n" + "╔" + "═"*47 + "╗")
+    print("║       CSP SUDOKU SOLVER — Results            ║")
+    print("╚" + "═"*47 + "╝")
+
+    summary = []   # collect stats for final table
+
+    for filename, label in puzzles:
+        print(f"\n{'▶'*3}  {label}  ({filename})")
+
+        # Read puzzle
+        try:
+            grid = read_grid(filename)
+        except FileNotFoundError:
+            print(f"   [!] File not found: {filename}")
+            continue
+        except ValueError as e:
+            print(f"   [!] Format error: {e}")
+            continue
+
+        print_grid(grid, label=f"INPUT — {label}")
+
+        # Solve
+        solution, calls, failures = solve(grid)
+
+        if solution is None:
+            print("   [✗] No solution found.")
+            summary.append((label, calls, failures, "UNSOLVED"))
+        else:
+            ok = verify_solution(solution)
+            status = "✓ VALID" if ok else "✗ INVALID"
+            print_grid(solution, label=f"SOLUTION — {label}  [{status}]")
+            print(f"  Backtrack calls   : {calls}")
+            print(f"  Backtrack failures: {failures}")
+            summary.append((label, calls, failures, status))
+
+    # ── Summary Table ──
+    print("\n" + "═"*60)
+    print(f"{'Board':<18} {'BT Calls':>10} {'BT Failures':>13} {'Status':>10}")
+    print("─"*60)
+    for label, calls, failures, status in summary:
+        print(f"{label:<18} {calls:>10} {failures:>13} {status:>10}")
+    print("═"*60)
+
+    # ── Brief commentary ──
+    print("""
+COMMENTARY ON BACKTRACK STATISTICS
+───────────────────────────────────
+Easy Board:
+  AC-3 alone resolves most cells. Very few backtracks needed
+  because the heavily-constrained initial state leaves little
+  ambiguity.
+
+Medium Board:
+  More empty cells require backtracking, but MRV heuristic
+  keeps the search focused. Failures are still low.
+
+Hard Board:
+  AC-3 provides less initial pruning. The solver relies more
+  heavily on backtracking + forward checking. Calls and
+  failures noticeably increase.
+
+Very Hard Board:
+  Designed to minimise the effect of constraint propagation.
+  The highest call/failure counts reflect how much more of the
+  search space must be explored when AC-3 gives little away.
+""")
+
+
+if __name__ == "__main__":
+    main()
