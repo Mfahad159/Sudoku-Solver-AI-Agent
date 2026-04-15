@@ -418,8 +418,7 @@ Want to enhance the solver?
 
 - **Code style**: Use PEP 8; 4-space indents; descriptive variable names
 - **Comments**: Explain the "why," not just the "what"
-- **Tests**: All new features need unit tests in `test.py`
-- **Documentation**: Update README.md if adding new functions/algorithms
+- **Tests**: All new features need unit tests in 
 
 ---
 
@@ -427,35 +426,6 @@ Want to enhance the solver?
 
 This project is licensed under the **MIT License** — see the LICENSE file for details.
 
-### What This Means
-
-You are free to:
-- Use this code in your own projects (personal or commercial)
-- Modify and distribute it
-- Sublicense it
-
-You must:
-- Include the original license notice in redistributions
-- Provide a copy of the license with your project
-
----
-
-## References & Further Reading
-
-### Constraint Satisfaction & CSPs
-
-- Russell, S. J., & Norvig, P. (2020). *Artificial Intelligence: A Modern Approach* (4th ed.). Prentice Hall.
-  - Chapter 6: Constraint Satisfaction Problems
-  
-- Tsang, E. (1993). *Foundations of Constraint Satisfaction*. Academic Press.
-  - In-depth coverage of arc consistency algorithms
-
-### Arc Consistency Algorithms
-
-- Mackworth, A. K. (1977). "Consistency in Networks of Relations." *Artificial Intelligence*, 8(1), 99–118.
-  - AC-1, AC-2 foundations
-
-- Wikipedia: [Arc Consistency](https://en.wikipedia.org/wiki/Local_consistency#Arc_consistency)
 
 ### Sudoku & Algorithms
 
@@ -464,16 +434,6 @@ You must:
 
 - "[Sudoku's Hardest Puzzles](https://www.scientificamerican.com/article/can-you-solve-sudoku-s-hardest-puzzle/)" — Scientific American
   - Discusses puzzle generation and minimal difficulty metrics
-
----
-
-## Author & Acknowledgments
-
-**Author:** [Your Name]  
-**Course:** Semester 6, AI (NU)  
-**Assignment:** A5 — CSP & Constraint Propagation  
-
-Built with care and constraint logic.
 
 ---
 
@@ -493,12 +453,3 @@ python solve_custom.py
 # Run unit tests (if available)
 python test.py
 ```
-
----
-
-**Questions?** Open an issue or contact the maintainers.  
-**Want to learn more?** Dive into the `sudoku.py` source — it's thoroughly commented!
-
----
-
-*Last Updated: April 2026*
